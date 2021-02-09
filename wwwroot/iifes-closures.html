@@ -1,0 +1,170 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Did Ya Get that Thing I Sent Ya?</title>
+    <link href="styles/Main.css" rel="stylesheet" />
+</head>
+<body>
+    <div id="results">
+        <label>How Long?</label>
+        <input type="text" id="hours" />
+        <input type="button" id="dance" value="Dance" />
+        <br/>
+        <input type="button" id="dance2" value="Dance For 2 Hours" />
+        <br />
+        <span id="output" style="color:green;"></span>        
+
+
+    </div>
+    <script src="node_modules/jquery/dist/jquery.min.js"></script>
+    <script>    
+        //PART 1...
+        //var city = "Cleveland";
+        
+        let temp = ";"
+        if (city == "Cleveland") {
+            temp = "Ohio";
+        } else {
+            temp = "Some other state";
+        }
+        alert( temp);
+      
+
+        //alert(`window.city: ${window.city}`);
+        //alert(`this.city: ${this.city}`);
+
+        ////PART 1a: OK, so just create a function...
+
+        function GetState(city) {
+            let temp = ";"
+            if (city == "Cleveland") {
+                temp = "Ohio";
+            } else {
+                temp = "Some other state";
+            }
+            alert(temp);
+        }
+
+        //alert(GetState("Cleveland"));
+
+        ////Problem is: Still out there in the global namespace, possible 
+        //// conflicts, and since it's not one unit, it's not as easy to
+        //// understand the developer's intention, 
+
+        ////----------------------
+
+        ////PART 2: the IIFE: SELF-CONTAINED!
+        (function () {
+         
+            let temp = ";"
+            if (city == "Cleveland") {
+                temp = "Ohio";
+            } else {
+                temp = "Some other state";
+            }
+            alert(temp);
+        })();
+
+        ////-----------------
+        ////PART 3: passing a parameter
+        (function (city) {           
+            
+            let temp = ";"
+            if (city == "Cleveland") {
+                temp = "Ohio";
+            } else {
+                temp = "Some other state";
+            }
+            alert(temp);
+          
+        })("Hoboken");
+
+        // Not quite as much of a need for this with JS modules,
+        //  but cases where IIFEs are still helpful:
+
+        // multiple JS libraries where a global var has the same name
+        // (Like jQuery and another that use the $)
+        // Now specifically for jquery you can do no-conflict mode.
+        // but let's say this is 2 other libraries... we could:
+        // create an IIFE that takes an argument that's the
+        // "disputed" identifier.. and we can pass jQuery (the jQuery
+        // function), and make our jQuery calls inside that function.
+
+        (function ($) {
+            //In here, $ now refers to the jQuery function
+        })(jQuery);
+
+
+        //As far as closures, if you're *NOT* going full OOP, then...
+
+        // Let's say you've got this...
+        // You've got a little FOR loop that assigns a function
+        // to each member of the array... a function that we're going to call with forEach later
+        let squares = [];
+
+        for (let counter = 1; counter <= 10; counter++) {
+            var sqr = Math.pow(counter,2);
+            squares.push(() => $("#output").append(`<br/>${counter}: ${sqr}`))
+        }
+        
+        // Everytime we add that function to the array, it's a closure...
+        // But we're not saving the function really, we have a reference
+        // to it, so we get...
+     
+        squares.forEach(func => func());
+
+        //So we need a closure around the whole thing...
+        let otherSquares = [];
+        for (let counter = 1; counter <=10 ; counter++) {
+            (() => {
+                let sqr = Math.pow(counter,2);
+                otherSquares.push(() => $("#output").append(`<br/>${counter}: ${sqr}`))
+            })();
+        }
+        otherSquares.forEach(func => func());
+        
+        
+      
+        $(document).ready(function () {
+            //function declaration: the usual way
+            function doALittleDance(hours) {
+                return `We danced for ${hours} hours`;
+            }
+
+            $("#dance").on("click", function (evt) {
+                $("#output").html(doALittleDance($("#hours").val()));
+            })
+
+            //function expression = assigning a function to a variable..
+            var twoHoursDancing = doALittleDance(2);
+
+           
+
+            //...which we can then call
+            $("#dance2").on("click", function (evt) {
+                $("#output").html(twoHoursDancing);
+            });
+
+
+             //So let's say we have this...
+            // (The stuff up BEFORE the document.ready)
+
+
+            //in fact, anything in ( ) is an expression, so we can 
+            //create a function expression like this...
+
+                (function danceALittleMore() {
+
+                    return doALittleDance(5);
+                })();
+
+
+
+
+
+        });
+      
+    </script>
+</body>
+</html>

@@ -1,0 +1,105 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Did Ya Get that Thing I Sent Ya?</title>
+    <link href="styles/Main.css" rel="stylesheet" />
+</head>
+<body>
+    <div id="results">
+        <label>Calculate Primes</label>
+        <input type="text" id="primes" /><br/>
+        <input type="button" id="calcFunc" value="Calculate Primes (Func only)" /><br/>
+        <input type="button" id="calcMemo" value="Calculate Primes (Memoized)" /><br/>
+        <input type="button" id="yourOwnHOF" value="Use Your Own Higher Order Function"/>
+        <br />
+        Primes: <span id="output" style="color:green;"></span><br />
+        Output Source: <span id="messages" style="color:red;"></span>
+
+
+    </div>
+    <script src="node_modules/jquery/dist/jquery.min.js"></script>
+    <script>    
+
+        let FunWithMath = {
+
+            CalcPrimes: function (number) {
+                $("#messages").html("Calc function");
+                let primes = [];
+                for (let bound = 1; bound <= number; bound++) {
+                    let prime = false;
+                    for (let i = 2; i <= bound; i++) {
+                        if (bound % i === 0 && i !== bound) {
+                            prime = true;
+                        }
+                    }
+                    if (!prime) {
+                        primes.push(bound);
+                    }
+                }
+
+                return primes;
+            },
+
+
+            Cache: [],
+
+            MemoizedPrimes: function (number) {
+                let temp;
+                if (number in this.Cache) {
+                    temp = this.Cache[number];
+                    $("#messages").html("Memoized Cache");
+                } else {
+                    temp = this.CalcPrimes(number);
+                    this.Cache[number] = temp;
+                }
+                return temp;
+            },
+        };
+
+
+        $(document).ready(function () {
+            $("#calcFunc").on("click", function (evt) {
+                
+               
+                $("#output").html("");
+                $("#message").html("");
+
+                let $upper = $("#primes").val();
+                let $primes = FunWithMath.CalcPrimes($upper);
+
+                $primes.forEach((v, i) => $("#output").append(`${v} `));
+
+            });
+
+            $("#calcMemo").on("click", function (evt) {
+                $("#output").html("");
+                $("#message").html("");
+                let $upper = $("#primes").val();
+                let $primes = FunWithMath.MemoizedPrimes($upper);
+                $primes.forEach((v, i) => $("#output").append(`${v} `));
+
+               
+            });
+
+            function DoCalc(how) {
+                $("#output").html("");
+                $("#message").html("");
+                let $upper = $("#primes").val();                
+                let $primes = how($upper);
+                $primes.forEach((v, i) => $("#output").append(`${v} `));
+            }
+
+
+            $("#yourOwnHOF").on("click", () => {
+                DoCalc(FunWithMath.CalcPrimes);
+            });
+
+
+
+
+        });
+      
+    </script>
+</body>
+</html>

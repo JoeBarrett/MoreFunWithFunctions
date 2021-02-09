@@ -1,0 +1,132 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Higher, Love!</title>
+    <link href="styles/Main.css" rel="stylesheet" />
+</head>
+<body>
+    <div id="results">
+        <label>Go ahead, enter something, I dare you! --></label>
+        <input type="text" id="entry" />
+        <br />
+        <input type="button" id="funcAsArg" value="Func as arg" />
+        <br />
+        <input type="button" id="funcAsReturnVal" value="Func as return val" />
+        <br />
+
+        <select id="names" size="3">
+            <option>Tijuana</option>
+            <option>Alberquerque</option>
+            <option>Flatbush</option>
+            <option>Oxnard</option>
+            <option>Akron</option>
+            <option>Compton</option>
+            <option>Long Beach</option>
+            <option>Annapolis</option>
+            <option>Constantinople</option>
+        </select>
+        <span id="filtered"></span>
+        <br/>
+        <input type="text" id="filterValue"/>
+        <input type="button" id="jsFilter" value="JS: Filter" />
+        <br />
+        <input type="button" id="jsReduce" value="JS: Reduce" />
+        <br />
+
+        <span id="echo"></span>
+
+    </div>
+    <script src="node_modules/jquery/dist/jquery.min.js"></script>
+    <script>
+        /* HIGHER ORDER functions: Funcs that take a func as an arg,
+         * or return one!
+        */
+
+        $(document).ready(function () {
+
+            $("#names").attr("size", $("#names option").length);
+
+            //function that takes a function as an argument           
+            $("#funcAsArg").on("click", function (evt) {
+                $("#echo").html($("#entry").val());
+            })
+
+            //function that returns a function
+            function switchSigns(direction) {
+
+                return function (originalValue) {
+                    let value = originalValue;
+                    if (direction === "positive") {
+                        value = Math.abs(originalValue);
+                    } else {
+                        //leave it as is
+                    }
+                    return value;
+                }
+            }
+
+
+            $("#funcAsReturnVal").on("click", function (evt) {
+                let forMomAndDad = switchSigns("positive");
+                let forTheBooks = switchSigns("leave it");
+
+                $("#echo").html(`Mom and Dad see ${forMomAndDad(-500)}`);
+                $("#echo").append(`<br/>Accounting sees ${forTheBooks(-500)}`);
+            })
+
+
+            //The filter function defined (to be used later)
+            function filterForLetters(word) {
+
+                let phrase = $("#filterValue").val();
+                return word.search(phrase) >= 0;
+
+            }
+
+
+            $("#jsFilter").on("click", function (evt) {
+
+                let $options = $("#names option");
+
+                let $cities = [];
+                $.each($options, function (idx, opt) {
+                    $cities.push($(opt).text());
+                });
+
+                //Get cities that contain the letter(s) 
+                let phrase = $("#filterValue").val();
+
+                let $matchingCities = $cities.filter(word => {
+                    console.log(word, phrase);
+                    return word.toLowerCase().search(phrase.toLowerCase()) >= 0
+                });
+                
+                $("#filtered").html(`<br/>${$matchingCities.length} match(es)...`);
+                
+                $.each($matchingCities, (i, v) =>
+                    $("#filtered").append(`<br/>${v}`)
+                );
+
+
+            });
+
+            $("#jsReduce").on("click", function (evt) {
+                let $options = $("#names option").toArray();
+               
+               
+                let totalChars = $options.map(option => $(option).text().length)
+                    .reduce((total, current) =>  total += current, 0);
+                    $("#filtered").html(`Total characters in all &lt;option&gt; elements: ${totalChars}`);
+                });
+            
+        });
+
+
+
+
+        //Create your own higher order functions: Use the example from
+        // the "youve-been-memoized" page.
+    </script>
+</body>
+</html>

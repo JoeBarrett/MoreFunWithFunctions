@@ -1,0 +1,147 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>This is what it is</title>
+    <link href="styles/Main.css" rel="stylesheet" />
+</head>
+<body>
+    <div id="results">
+        <input type="button" id="sing" value="Play A Song" />
+        <br />       
+        <input type="button" id="moresingers" value="Using call() and apply()" />
+        <br />
+        <input type="button" id="binding" value="Using bind()" />
+        <br />
+        <input type="button" id="curring" value="Delicious Curry"/>
+
+        <span id="output" style="color:green"></span>
+
+    </div>
+    <script src="node_modules/jquery/dist/jquery.min.js"></script>
+    <script>
+
+        class Singer {
+            constructor(name) {
+                this.name = name;
+            };
+
+            sing() {
+                $("#output").html(`${this.name} sang!`);
+            };
+
+            singlater() {  
+                //var self = this;
+
+                //Because setTimeout is actually WINDOW.setTimeout...
+                //window.setTimeout(....)
+                setTimeout(function () {
+                    this.sing();
+                }, 3000);
+            };
+
+            makearequest(song, volume) {
+                $("#output").html(`${this.name} sang '${song}' at a ${volume} volume!`);
+            }
+        }
+
+        $("#sing").on("click", function (evt) {
+            let luciano = new Singer("Opera Dude");
+            luciano.sing();
+            luciano.singlater();
+        });
+
+        // CALL is a way to create a function you can use with different objects
+        // (Because all functions belong to some object.. If not explicitly
+        // to some object you created, then the global object.
+        // and be default, THIS refers to the owner of the function
+
+        $("#moresingers").on("click", function (evt) {    
+            let luciano = new Singer("Opera Dude");          
+
+            let maria = { name: "Opera Woman" };
+            luciano.sing.call(maria);
+            $("#output").append("<br/>done");
+
+            maria.song = "Qui a pris mon verre?";
+            maria.volume = "Loud";
+            luciano.makearequest.call(maria, maria.song, maria.volume);
+
+            luciano.makearequest.apply(maria, [maria.song, maria.volume]);
+        });
+
+
+        //Bind actually returns a new function, where you've reset THIS
+        // to the object you pass when you run the bind statement...
+        // (jQuery has/had a BIND, it's deprecated, use ON now...)
+
+        
+        function makearequest(volume) {
+            $("#output").html(`${this.name} sang '${this.song}' at a ${volume} volume!`);
+        }
+
+        $("#binding").on("click", function (evt) {
+            let jon = { name: 'Jon', song: 'la ciambella di gelatina' };
+            let jonSangAboutDoughnuts = makearequest.bind(jon);
+            jonSangAboutDoughnuts('soft');
+
+            let bruce = { name: 'Bruce', song: 'Lightning Highway' };
+            let bruceSingsAboutWeather = makearequest.bind(bruce);
+            bruceSingsAboutWeather('loud');
+        });
+
+
+        /* You can also use what's called CURRYING if you want to do this
+         * same kind of thing, but create a chain where a function that
+         * used to take multiple arguments now takes them in one call..
+         * 
+         * so maybe we had....
+         */
+
+            function getScore(sport, team, day) {
+                let result = Math.random() < 0.5 ? "won" : "lost";
+                return `${team} in ${sport} league ${result} on ${day}`;
+            }
+
+            // or the anon version...
+            let result = (team, sport, day) => {
+                let result = Math.random() < 0.5 ? "won" : "lost";
+                return `${team} in ${sport} league ${result} on ${day}`;
+            }
+
+            //With Currying, we can change that to be this way:
+            function getScoreCurried(sport) {
+                let result = Math.random() < 0.5 ? "won" : "lost";
+
+                return function (team, day) {
+                    return `${team} in ${sport} league ${result} on ${day}`;
+                }
+                    
+            };
+
+
+        $("#curring").on("click", (evt) => {
+            let getAFootballScore = getScoreCurried("NFL");
+            $("#output").html(getAFootballScore("Pottsville", new Date(1933, 9, 4).toDateString()));
+        })
+
+         
+
+            //If you really want to come down to it, BIND and currying
+            // can both give you that ability to chain function calls,
+            // and they do a lot of the same things, but for the functional
+            // programmer where we want to cut down the number of 
+            // params you're passing, which is pretty common in libraries
+            // for example, currying can make your code a little more
+            // readable to use
+        
+
+
+
+
+
+
+        
+    </script>
+</body>
+</html>

@@ -1,0 +1,96 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Starter: Exercise Your Functionality</title>
+    <link href="styles/Main.css" rel="stylesheet" />
+</head>
+<body>
+    <div>
+        <p>
+            <label>Enter the first number: </label>
+            <input type="number" id="firstNum" />
+        </p>
+        <p>
+            <label>Enter the second number: </label>
+            <input type="number" id="secondNum" />
+        </p>
+
+        <select size="3" id="opToRun">
+            <option value="hypot">Hypotenuse</option>
+            <option value="sum">SumBetween</option>
+            <option value="anon">(Anonymous function)</option>
+        </select>
+        <br />
+        <input type="button" value="Run Selected" id="run" />
+        <br />
+        <span id="output"></span>
+    </div>
+    <script src="node_modules/jquery/dist/jquery.min.js"></script>
+    <script>
+
+
+        //Assume numeric values (Validation checks removed for brevity)
+
+        function Hypotenuse(oneSide, otherSide) {           
+            let squaresOfOtherSides = Math.pow(oneSide, 2) + Math.pow(otherSide, 2);
+            return Math.sqrt(squaresOfOtherSides);
+        };
+
+        function SumBetween(first, second) {
+            let sum = 0;
+            for (let counter = first + 1; counter < second; counter++) {
+                sum += counter;
+            }
+           
+            return sum;
+        }
+
+        function LargestPrimeinRange(lower, upper) {
+            let largestPrime = 0;
+            for (let bound = lower + 1; bound < upper; bound++) {
+                let prime = false;
+                for (let i = 2; i <= bound; i++) {
+                    if (bound % i === 0 && i !== bound) {
+                        prime = true;
+                    }
+                }
+                if (!prime) {
+                    largestPrime = bound;
+                    // primes.push(bound);
+                }
+            }
+
+            return largestPrime;
+        }     
+
+        function MathOps(first, second, operation) {
+            return operation(first, second);
+        }
+
+     
+        $("#run").on("click", (evt) => {
+            
+            let op = $("#opToRun option:selected").val();
+            let first = Number($("#firstNum").val());
+            let second = Number($("#secondNum").val());
+            let output = $("#output");
+            output.html("<br/>");
+            switch (op) {
+                case "hypot":
+                    output.append("<br/>Result: " + MathOps(first, second, Hypotenuse));
+                    break;
+                case "sum":
+                    output.append("<br/>Result: " + MathOps(first, second, SumBetween));
+                    break;
+                case "anon":
+                    output.append("<br/>Result: " + MathOps(first, second, (x, y) => x + y));
+                    break;
+
+            }
+            
+        });
+    </script>
+    
+</body>
+</html>

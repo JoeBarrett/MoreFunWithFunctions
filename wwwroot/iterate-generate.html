@@ -1,0 +1,171 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Iteraring a Generator that Iterates...?</title>
+    <link href="styles/Main.css" rel="stylesheet" />
+</head>
+<body>
+    <div>
+        <label>Enter something: </label>
+        <input type="text" id="sample"/>
+        <input type="button" id="stringerator" value="Make Something New!"/>
+        <input type="button" id="arrayarator" value="Iterate an Array!"/>
+        <input type="button" id="yourowniterator" value="Iterate your Own Thing"/>
+        <input type="button" id="yourowngenerator" value="Generate your Own Thing"/>
+        <input type="button" id="generateplaces" value="Generate Places"/>
+        <br/>
+        <span id="result"></span>
+    </div>
+    <script src="node_modules/jquery/dist/jquery.min.js"></script>
+    <script src="/scripts/places.js"></script>
+    <script>
+        // Iterators already live in JS.. You can iterate a string, for
+        // example, because the string object has the required code for that
+        // already baked into it, so...
+        $("#stringerator").on("click", function (evt) {
+           
+            let newString="";
+            let stringThing = (char) => {               
+                newString += `${char}.`;
+            }
+
+            let $sample = $("#sample").val();           
+            [...$sample].forEach(stringThing);
+            $("#result").html(newString);
+        });
+
+
+        /* So if you want to create your own object as iterable, 
+         * the rules are that it has to have a [Symbol.iterable] method
+         * that returns an Iterator object
+         * This is actually how Arrays are iterable to start with...
+         */
+
+        $("#arrayarator").on("click", function (evt) {
+            let names = ["Anchorage", "Boston", "Cleveland", "Dallas", "Edinburgh"];
+            $("#result").html(`names[Symbol.iterator]: ${names[Symbol.iterator]}`);
+
+            let namerator = names[Symbol.iterator]();
+            let done;
+            let nextIteration;
+            while (done !== true) {
+                nextIteration = namerator.next();
+                $("#result").append(`<br/>${JSON.stringify(nextIteration)}`);
+                done = nextIteration.done;
+            }
+
+        });
+
+
+
+        //So if your object is iterable, you're implementing that same
+        // code construct...
+
+      
+        /*Why would you use an iterator? 
+         * Using an iterator is beneficial for performance. 
+         * With large datasets, you might have to load the whole thing to iterate over it.
+         * Iterator load data on an "as needed" basis.
+         * So you've got a set of data from wherever, and you want to process or show it.
+         * This is where an iterator is handy... 
+         */
+
+       
+
+        function iterateARange(start, end)  {
+            let nextnumber = start;            
+
+            const rangeIterator = {
+                next: function () {
+                    let result = {};
+                    if (nextnumber < end) {
+                        result.value = nextnumber;
+                        result.done = false;
+                        nextnumber++;                        
+                        return result;
+                    }
+                    //When there's nothing left...
+                    result.value = undefined;
+                    result.done = true;
+                    return result;
+                }
+            };
+            return rangeIterator;
+        }
+
+
+        $("#yourowniterator").on("click", function (evt) {
+            $("#result").html("");
+            let howMany = 10;
+            let iterable = iterateARange(1, 10);
+            let sequence = iterable.next();
+            while (sequence.done===false) {
+                $("#result").append(`<br/>${JSON.stringify(sequence)}`);
+                sequence = iterable.next();
+            }
+            $("#result").append(`<br/>${JSON.stringify(sequence)}`);
+        });
+
+
+        /* (If you read the documentation at Mozilla.org, you'll see...)
+         * While custom iterators are a useful tool, their creation requires careful programming 
+         * due to the need to explicitly maintain their internal state.
+         * Generator functions provide a powerful alternative: they allow you to define an iterative algorithm by writing a single function whose execution is not continuous.
+         * Generator functions are written using the function* syntax.
+         */
+
+        // So we can rewrite the other one above this way...
+
+        function* generateARange(start, end) {
+            let count = 0;
+            for (let i = start; i < end; i++) {
+                count++;
+                yield i;
+            }
+            return `Final count was ${count}`;
+        }
+
+        function* generateAPlace(start, end) {
+            let count = 0;
+            for (let i = start; i < end; i++) {
+                count++;
+                yield _myplaces[i];
+            }
+            return `Final count was ${count}`;
+        }
+
+        $("#yourowngenerator").on("click", function (evt) {
+            $("#result").html("");
+          
+            let iterable = generateARange(1, 10);
+            let sequence = iterable.next();
+            while (sequence.done === false) {
+                $("#result").append(`<br/>${JSON.stringify(sequence)}`);
+                sequence = iterable.next();
+            }
+            $("#result").append(`<br/>${JSON.stringify(sequence)}`);
+        })
+
+        $("#generateplaces").on("click", function (evt) {
+            $("#result").html("");
+          
+            let iterable = generateAPlace(1, 5);
+            let sequence = iterable.next();
+            while (sequence.done === false) {
+                $("#result").append(`<br/>${JSON.stringify(sequence)}`);
+                sequence = iterable.next();
+            }
+            $("#result").append(`<br/>${JSON.stringify(sequence)}`);
+        })
+
+
+         
+
+
+
+
+        
+    </script>
+</body>
+</html>
