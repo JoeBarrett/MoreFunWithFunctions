@@ -39,13 +39,13 @@
         </table>
     </div>
 
-    <script src="node_modules/jquery/dist/jquery.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js" integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
     <script>
 
 
         //Assume numeric values (Validation checks removed for brevity)
 
-        function Hypotenuse(oneSide, otherSide) {           
+        function Hypotenuse(oneSide, otherSide) {
             let squaresOfOtherSides = Math.pow(oneSide, 2) + Math.pow(otherSide, 2);
             return Math.sqrt(squaresOfOtherSides);
         };
@@ -55,7 +55,7 @@
             for (let counter = first + 1; counter < second; counter++) {
                 sum += counter;
             }
-           
+
             return sum;
         }
 
@@ -75,7 +75,7 @@
             }
 
             return largestPrime;
-        }     
+        }
 
         function MathOps(first, second, operation) {
             return operation(first, second);
@@ -90,7 +90,7 @@
             let temp; // eventual returned result
 
             if (cacheSign in _mem_Cache) {
-              
+
                 temp = _mem_Cache[cacheSign];
                 output.append(`<br/>result retrieved from existing cache at ${new Date().toTimeString()}`);
             } else {
@@ -101,7 +101,7 @@
                 _mem_Cache[cacheSign] = temp;
                 output.append(`<br/>new value in cache @ ${cacheSign} ==> ${_mem_Cache[cacheSign]}`);
             }
-           
+
             return temp;
         }
 
@@ -117,11 +117,11 @@
             console.log('done');
             $("#cachedisplay").show();
         }
-       
+
 
 
         $("#run").on("click", (evt) => {
-            
+
             let op = $("#opToRun option:selected").val();
             let first = Number($("#firstNum").val());
             let second = Number($("#secondNum").val());
@@ -129,10 +129,10 @@
             output.html("<br/>");
             switch (op) {
                 case "hypot":
-                    output.append("<br/>Result: " +_mem_MathOps(first, second, Hypotenuse));
+                    output.append("<br/>Result: " + _mem_MathOps(first, second, Hypotenuse));
                     break;
                 case "sum":
-                    output.append("<br/>Result: " +_mem_MathOps(first, second, SumBetween));
+                    output.append("<br/>Result: " + _mem_MathOps(first, second, SumBetween));
                     break;
                 case "anon":
                     output.append("<br/>" + _mem_MathOps(first, second, (x, y) => x + y));
@@ -142,6 +142,6 @@
             enumCache();
         });
     </script>
-    
+
 </body>
 </html>
