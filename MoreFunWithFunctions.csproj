@@ -143,6 +143,8 @@
     <None Include="node_modules\jquery\src\var\support.js" />
     <None Include="node_modules\jquery\src\var\toString.js" />
     <None Include="node_modules\jquery\src\wrap.js" />
+    <None Include="wwwroot\cyclehigh5.jpg" />
+    <None Include="wwwroot\htmlpage.html" />
     <None Include="wwwroot\node_modules\jquery\dist\jquery.js" />
     <None Include="wwwroot\node_modules\jquery\dist\jquery.min.js" />
     <None Include="wwwroot\node_modules\jquery\dist\jquery.min.map" />

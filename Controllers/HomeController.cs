@@ -15,11 +15,14 @@ namespace MoreFunWithFunctions.Controllers
 
         public HomeController(ILogger<HomeController> logger)
         {
+           
             _logger = logger;
+            _logger.Log(LogLevel.Information, $"Constructor ran at {DateTime.Now.ToShortTimeString()}");
         }
 
         public IActionResult Index()
         {
+            _logger.Log(LogLevel.Information, $"Index action ran at {DateTime.Now.ToShortTimeString()}");
             return View();
         }
 
